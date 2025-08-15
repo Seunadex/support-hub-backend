@@ -24,7 +24,10 @@ Devise.setup do |config|
     jwt.dispatch_requests = [
       [ "POST", %r{^/graphql$} ]
     ]
-    jwt.revocation_strategy = JwtDenylist
+    jwt.revocation_requests = [
+      [ "DELETE", %r{^/graphql$} ]
+    ]
+    # jwt.revocation_strategy = JwtDenylist
     jwt.expiration_time = 60.minutes.to_i
   end
 
