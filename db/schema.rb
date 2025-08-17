@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_15_133127) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_17_133005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "comments", force: :cascade do |t|
+    t.text "body"
+    t.bigint "ticket_id", null: false
+    t.bigint "author_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_comments_on_author_id"
+    t.index ["ticket_id"], name: "index_comments_on_ticket_id"
+  end
 
   create_table "jwt_denylists", force: :cascade do |t|
     t.string "jti"
@@ -63,6 +73,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_15_133127) do
     t.index ["role"], name: "index_users_on_role"
   end
 
+  add_foreign_key "comments", "tickets"
+  add_foreign_key "comments", "users", column: "author_id"
   add_foreign_key "tickets", "users"
   add_foreign_key "tickets", "users", column: "agent_id"
   add_foreign_key "tickets", "users", column: "customer_id"
