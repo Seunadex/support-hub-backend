@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_15_115634) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_15_133127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,6 +20,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_15_115634) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
+  end
+
+  create_table "tickets", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.integer "status", default: 0
+    t.integer "priority", default: 0
+    t.integer "category", default: 0
+    t.string "number", null: false
+    t.datetime "closed_at"
+    t.datetime "first_response_at"
+    t.datetime "reopened_at"
+    t.boolean "agent_has_replied", default: false
+    t.bigint "user_id", null: false
+    t.bigint "customer_id", null: false
+    t.bigint "agent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_tickets_on_agent_id"
+    t.index ["category"], name: "index_tickets_on_category"
+    t.index ["customer_id"], name: "index_tickets_on_customer_id"
+    t.index ["number"], name: "index_tickets_on_number", unique: true
+    t.index ["priority"], name: "index_tickets_on_priority"
+    t.index ["status"], name: "index_tickets_on_status"
+    t.index ["user_id"], name: "index_tickets_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -37,4 +62,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_15_115634) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["role"], name: "index_users_on_role"
   end
+
+  add_foreign_key "tickets", "users"
+  add_foreign_key "tickets", "users", column: "agent_id"
+  add_foreign_key "tickets", "users", column: "customer_id"
 end

@@ -5,6 +5,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
 
+  has_many :tickets, dependent: :destroy
+  has_many :requested_tickets, class_name: "Ticket", foreign_key: "customer_id", dependent: :nullify
+  has_many :assigned_tickets, class_name: "Ticket", foreign_key: "agent_id", dependent: :nullify
+
   enum :role, { customer: 0, agent: 1 }
 
   def self.jwt_revoked?(payload, user)
