@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  match "*path", to: proc { [ 204, { "Content-Type" => "text/plain" }, [] ] }, via: :options
   post "/graphql", to: "graphql#execute"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
