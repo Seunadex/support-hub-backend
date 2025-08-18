@@ -14,5 +14,13 @@ module Types
     def tickets
       Resolvers::Tickets.resolve_many(context[:current_user])
     end
+
+    field :ticket, Types::TicketType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def ticket(id:)
+      Resolvers::Tickets.resolve(id)
+    end
   end
 end

@@ -8,6 +8,7 @@ module Types
     field :number, String, null: false
     field :category, String, null: false
     field :customer, Types::UserType, null: false
+    field :agent_has_replied, Boolean, null: false
     field :reopened_at, GraphQL::Types::ISO8601DateTime, null: true
     field :closed_at, GraphQL::Types::ISO8601DateTime, null: true
     field :first_response_at, GraphQL::Types::ISO8601DateTime, null: true
