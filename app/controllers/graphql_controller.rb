@@ -1,18 +1,19 @@
 # frozen_string_literal: true
 
 class GraphqlController < ApplicationController
-  # If accessing from outside this domain, nullify the session
-  # This allows for outside API access while preventing CSRF attacks,
-  # but you'll have to authenticate your user separately
-  # protect_from_forgery with: :null_session
+  before_action :authenticate_user!, unless: :public_operation?
+  respond_to :json
+
+  rescue_from ActionController::InvalidAuthenticityToken do
+    render json: { errors: [ "Invalid CSRF token" ] }, status: :unauthorized
+  end
 
   def execute
     variables = prepare_variables(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      # Query context goes here, for example:
-      current_user: current_user
+      current_user: @current_user
     }
     result = SupportHubBackendSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
@@ -23,14 +24,32 @@ class GraphqlController < ApplicationController
 
   private
 
-  def current_user
-    return if request.headers["Authorization"].blank?
+  def public_operation?
+    return false unless params[:operationName]
+    [ "Login" ].include?(params[:operationName])
+  end
 
-    token = request.headers["Authorization"].split(" ").last
-    payload = JWT.decode(token, Rails.application.credentials.secret_key_base).first
-    User.find(payload["sub"])
-  rescue JWT::DecodeError, ActiveRecord::RecordNotFound
-    nil
+  def authenticate_user!
+   header = request.headers["Authorization"]
+    token = header&.split(" ")&.last
+    return unauthorized unless token
+
+    begin
+      secret = Warden::JWTAuth.config.secret
+      alg = Warden::JWTAuth.config.algorithm
+      decoded = JWT.decode(token, secret, true, { algorithm: alg })
+      @token_payload = decoded.first
+      @current_user = User.find_by(id: @token_payload["sub"])
+      unauthorized unless @current_user
+    rescue JWT::ExpiredSignature
+      unauthorized("Token expired")
+    rescue JWT::DecodeError
+      unauthorized("Invalid token")
+    end
+  end
+
+  def unauthorized(message = "Unauthorized")
+    render json: { errors: [ message ] }, status: :unauthorized
   end
 
   # Handle variables in form data, JSON body, or a blank value

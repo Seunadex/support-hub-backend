@@ -3,7 +3,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
+         :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_many :tickets, dependent: :destroy
   has_many :requested_tickets, class_name: "Ticket", foreign_key: "customer_id", dependent: :nullify
@@ -21,7 +21,7 @@ class User < ApplicationRecord
       sub: id,
       email: email,
       role: role,
-      exp: 1.hour.from_now.to_i,
+      exp: 24.hours.from_now.to_i,
       jti: SecureRandom.uuid,
       aud: "support-hub"
     }

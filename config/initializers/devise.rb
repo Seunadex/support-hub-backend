@@ -20,15 +20,15 @@ Devise.setup do |config|
   # Configure the parent class to the devise controllers.
   # config.parent_controller = 'DeviseController'
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.secret_key_base
+    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
     jwt.dispatch_requests = [
       [ "POST", %r{^/graphql$} ]
     ]
     jwt.revocation_requests = [
       [ "DELETE", %r{^/graphql$} ]
     ]
-    # jwt.revocation_strategy = Devise::JWT::RevocationStrategies::Null
-    jwt.expiration_time = 60.minutes.to_i
+    # jwt.revocation_strategy = JwtDenylist
+    jwt.expiration_time = 24.hours.to_i
   end
 
   # ==> Mailer Configuration

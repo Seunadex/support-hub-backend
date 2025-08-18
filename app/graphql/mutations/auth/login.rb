@@ -12,7 +12,7 @@ module Mutations
         user = User.find_for_database_authentication(email: email)
 
         if user&.valid_password?(password)
-          token = Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
+          token = JWT.encode(user.jwt_payload, Warden::JWTAuth.config.secret, "HS256")
           { user: user, token: token, errors: [] }
         else
           { user: nil, token: nil, errors: [ "Invalid email or password" ] }
