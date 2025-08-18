@@ -1,4 +1,4 @@
-class TickerPolicy < ApplicationPolicy
+class TicketPolicy < ApplicationPolicy
   def index?
     user.present?
   end

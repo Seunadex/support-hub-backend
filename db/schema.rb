@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_17_133005) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_17_190153) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,7 +43,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_133005) do
     t.datetime "first_response_at"
     t.datetime "reopened_at"
     t.boolean "agent_has_replied", default: false
-    t.bigint "user_id", null: false
     t.bigint "customer_id", null: false
     t.bigint "agent_id"
     t.datetime "created_at", null: false
@@ -54,7 +53,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_133005) do
     t.index ["number"], name: "index_tickets_on_number", unique: true
     t.index ["priority"], name: "index_tickets_on_priority"
     t.index ["status"], name: "index_tickets_on_status"
-    t.index ["user_id"], name: "index_tickets_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -75,7 +73,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_17_133005) do
 
   add_foreign_key "comments", "tickets"
   add_foreign_key "comments", "users", column: "author_id"
-  add_foreign_key "tickets", "users"
   add_foreign_key "tickets", "users", column: "agent_id"
   add_foreign_key "tickets", "users", column: "customer_id"
 end

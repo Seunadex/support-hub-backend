@@ -7,5 +7,12 @@ module Types
     def current_user
       context[:current_user]
     end
+
+    field :tickets, [ Types::TicketType ], null: false
+    description "Fetch all tickets scoped to the current user"
+
+    def tickets
+      Resolvers::Tickets.resolve_many(context[:current_user])
+    end
   end
 end
