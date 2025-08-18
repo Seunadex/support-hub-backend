@@ -24,6 +24,7 @@ gem "devise-jwt"
 gem "graphql"
 gem "graphql-rails_logger"
 gem "pundit"
+gem "apollo_upload_server"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false

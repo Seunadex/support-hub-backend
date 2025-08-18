@@ -75,6 +75,9 @@ GEM
     annotate (2.6.5)
       activerecord (>= 2.3.0)
       rake (>= 0.8.7)
+    apollo_upload_server (2.1.6)
+      actionpack (>= 6.1.6)
+      graphql (>= 1.8)
     ast (2.4.3)
     base64 (0.3.0)
     bcrypt (3.1.20)
@@ -394,6 +397,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate
+  apollo_upload_server
   bootsnap
   brakeman
   debug
