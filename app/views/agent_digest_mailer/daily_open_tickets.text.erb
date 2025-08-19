@@ -1,0 +1,17 @@
+Hello, <%= @agent.full_name ||@agent.email %>
+
+Assigned to you (<%= @assigned.count %>):
+<% if @assigned.any? %>
+<% @assigned.each do |t| %>
+- <%= t.number %> — <%= t.title %> (<%= t.status %>, <%= t.priority %>)
+<% end %>
+<% else %>None 🎉<% end %>
+
+Unassigned (<%= @unassigned.count %>):
+<% if @unassigned.any? %>
+<% @unassigned.each do |t| %>
+- <%= t.number %> — <%= t.title %> (<%= t.status %>, <%= t.priority %>)
+<% end %>
+<% else %>None<% end %>
+
+View Portal: <%= Rails.application.config.x.frontend_base_url %>

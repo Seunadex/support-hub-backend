@@ -1,0 +1,27 @@
+<h2>Hello, <%= @agent.full_name || @agent.email %></h2>
+
+<p>Here’s your open-ticket digest:</p>
+
+<h3>Assigned to you (<%= @assigned.count %>)</h3>
+<% if @assigned.any? %>
+  <ul>
+    <% @assigned.each do |t| %>
+      <li><strong><%= t.number %></strong> — <%= t.title %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>None 🎉</p>
+<% end %>
+
+<h3>Unassigned (<%= @unassigned.count %>)</h3>
+<% if @unassigned.any? %>
+  <ul>
+    <% @unassigned.each do |t| %>
+      <li><strong><%= t.number %></strong> — <%= t.title %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>None</p>
+<% end %>
+
+<p><%= link_to 'View Portal', Rails.application.config.x.frontend_base_url %></p>

@@ -26,6 +26,8 @@ gem "graphql-rails_logger"
 gem "pundit"
 gem "apollo_upload_server"
 gem "aasm"
+gem "mission_control-jobs"
+gem "propshaft"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -45,6 +47,8 @@ gem "rack-cors"
 group :development do
   gem "graphiql-rails"
   gem "annotate"
+  gem "letter_opener"
+  gem "letter_opener_web"
 end
 
 group :development, :test do
