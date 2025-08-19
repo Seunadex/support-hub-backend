@@ -31,10 +31,10 @@ class TicketPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      return scope.all if user&.agent?
+      return scope.all.order(created_at: :desc) if user&.agent?
 
       # Customers can only see their own tickets
-      scope.where(customer_id: user&.id)
+      scope.where(customer_id: user&.id).order(created_at: :desc)
     end
   end
 end

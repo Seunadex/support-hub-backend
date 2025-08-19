@@ -13,9 +13,9 @@ module Types
     field :closed_at, GraphQL::Types::ISO8601DateTime, null: true
     field :first_response_at, GraphQL::Types::ISO8601DateTime, null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
-    field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
     field :assigned_to, Types::UserType, null: true
     field :attachments, [ Types::AttachmentType ], null: false
+    field :comments, [ Types::CommentType ], null: false
 
     def attachments
       object.attachments.attached? ? object.attachments : []
