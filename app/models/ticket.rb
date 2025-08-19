@@ -21,6 +21,7 @@ class Ticket < ApplicationRecord
   scope :active, -> { where.not(status: :closed) }
   scope :needs_attention, -> { where(status: [ :open, :reopened, :in_progress ]) }
   scope :waiting_for_customer, -> { where(status: :waiting_on_customer) }
+  scope :pending, -> { where(status: [ :in_progress, :waiting_on_customer ]) }
   scope :completed, -> { where(status: [ :resolved, :closed ]) }
 
   private

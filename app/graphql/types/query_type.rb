@@ -22,5 +22,12 @@ module Types
     def ticket(id:)
       Resolvers::Tickets.resolve(id)
     end
+
+    field :ticket_stat_count, Types::TicketStatCountType, null: false
+    description "Fetch ticket statistics for the current user"
+
+    def ticket_stat_count
+      Resolvers::TicketStatCount.resolve(context[:current_user])
+    end
   end
 end

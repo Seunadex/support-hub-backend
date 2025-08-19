@@ -30,7 +30,7 @@ class GraphqlController < ApplicationController
   end
 
   def authenticate_user!
-   header = request.headers["Authorization"]
+    header = request.headers["Authorization"]
     token = header&.split(" ")&.last
     return unauthorized unless token
 
