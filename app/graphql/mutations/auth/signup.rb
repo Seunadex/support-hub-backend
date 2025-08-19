@@ -14,7 +14,7 @@ module Mutations
         user = User.new(first_name: first_name, last_name: last_name, email: email, password: password)
 
         if user.save
-          token = Warden::JWTAuth::UserEncoder.new.call(user, :user, nil).first
+          token = JWT.encode(user.jwt_payload, Warden::JWTAuth.config.secret, "HS256")
           { user: user, token: token, errors: [] }
         else
           { user: nil, token: nil, errors: user.errors.full_messages }

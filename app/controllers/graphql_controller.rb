@@ -26,7 +26,7 @@ class GraphqlController < ApplicationController
 
   def public_operation?
     return false unless params[:operationName]
-    [ "Login" ].include?(params[:operationName])
+    [ "Login", "Signup" ].include?(params[:operationName])
   end
 
   def authenticate_user!
