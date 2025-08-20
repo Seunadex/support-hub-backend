@@ -20,7 +20,7 @@ module Types
     end
 
     def ticket(id:)
-      Resolvers::Tickets.resolve(id)
+      Resolvers::Tickets.resolve(id, context[:current_user])
     end
 
     field :ticket_stat_count, Types::TicketStatCountType, null: false

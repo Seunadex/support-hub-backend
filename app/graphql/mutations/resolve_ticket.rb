@@ -12,7 +12,7 @@ module Mutations
 
       authorize!(ticket, :can_resolve?)
 
-      if ticket.resolve_ticket!(context[:current_user])
+      if ticket.resolve_ticket!(current_user)
         { success: true, errors: [] }
       else
         { success: false, errors: state_transition_error(ticket) }

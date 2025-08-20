@@ -10,7 +10,6 @@ module Mutations
       ticket = find_ticket(ticket_id)
       return ticket_not_found_response unless ticket
 
-      current_user = context[:current_user]
       return unauthorized_response unless current_user
 
       # Use Pundit for authorization
@@ -71,8 +70,7 @@ module Mutations
     def create_comment(ticket, user, body)
       ticket.comments.create!(
         body: body,
-        author: user,
-        created_at: Time.current
+        author: user
       )
     rescue ActiveRecord::RecordInvalid => e
       # Return invalid record so we can check errors
@@ -84,10 +82,6 @@ module Mutations
       return agent_state_transition(ticket) if user.agent?
 
       { success: true, errors: [] }
-    end
-
-    def customer?(ticket, user)
-      ticket.customer_id == user.id
     end
 
     def customer_state_transition(ticket)

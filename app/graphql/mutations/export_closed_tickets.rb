@@ -11,7 +11,6 @@ module Mutations
     field :errors, [ String ], null: false
 
     def resolve(start_date:, end_date:)
-      current_user = context[:current_user]
       return unauthorized_response unless current_user&.agent?
 
       to   = end_date

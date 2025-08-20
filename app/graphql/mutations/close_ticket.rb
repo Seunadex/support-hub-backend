@@ -6,23 +6,44 @@ module Mutations
     field :errors, [ String ], null: false
 
     def resolve(ticket_id:)
-      ticket = Ticket.find_by(id: ticket_id)
+      return unauthorized_response unless current_user
 
-      return not_found_error(ticket_id) unless ticket
+      ticket = Ticket.find_by(id: ticket_id)
+      return not_found_error unless ticket
 
       authorize!(ticket, :can_close?)
 
-      if ticket.close_ticket!
+      result = false
+
+      ticket.with_lock do
+        begin
+          result = ticket.close_ticket!
+        rescue ActiveRecord::RecordInvalid
+          result = false
+        end
+      end
+
+      if result
         { success: true, errors: [] }
       else
         { success: false, errors: state_transition_error(ticket) }
       end
+    rescue Pundit::NotAuthorizedError
+      unauthorized_response
+    rescue StandardError => e
+      Rails.logger.error("CloseTicket mutation failed: #{e.class}: #{e.message}")
+      Rails.logger.error(e.backtrace.first(10).join("\n"))
+      { success: false, errors: [ "Unexpected error while closing ticket" ] }
     end
 
     private
 
-    def not_found_error(ticket_id)
-      { ticket: nil, errors: [ "Ticket not found" ] }
+    def not_found_error
+      { success: false, errors: [ "Ticket not found" ] }
+    end
+
+    def unauthorized_response
+      { success: false, errors: [ "Access denied" ] }
     end
 
     def state_transition_error(ticket)
