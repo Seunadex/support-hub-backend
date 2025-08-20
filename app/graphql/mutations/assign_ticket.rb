@@ -12,7 +12,7 @@ module Mutations
         return { ticket: nil, errors: [ "Ticket not found" ] }
       end
 
-      if ticket.assign_agent(context[:current_user])
+      if ticket.assign_to_agent!(context[:current_user])
         { ticket: ticket, errors: [] }
       else
         { ticket: nil, errors: state_transition_error(ticket) }

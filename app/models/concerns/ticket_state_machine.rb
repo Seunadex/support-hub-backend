@@ -3,50 +3,46 @@ module TicketStateMachine
 
   included do
     include AASM
-    enum :status, { open: 0, in_progress: 1, waiting_on_customer: 2, resolved: 3, closed: 4, reopened: 5 }
+    enum :status, { open: 0, in_progress: 1, waiting_on_customer: 2, resolved: 3, closed: 4 }
 
     aasm column: :status, enum: true do
       state :open, initial: true
-      state :in_progress, :waiting_on_customer, :resolved, :closed, :reopened
+      state :in_progress, :waiting_on_customer, :resolved, :closed
 
-      # Assign ticket to agent
+      # Open → In Progress: Agent assigns ticket to themselves
       event :assign do
-        transitions from: [ :open, :reopened ], to: :in_progress
-
-        after do
-          # Any additional logic after assignment
-        end
+        transitions from: :open, to: :in_progress
       end
 
-      # Agent responds to customer
+      # In Progress → Waiting on Customer: Agent sends first response
       event :agent_respond do
-        transitions from: [ :in_progress, :reopened ], to: :waiting_on_customer
+        transitions from: [ :in_progress ], to: :waiting_on_customer
 
         after do
-          # Log agent response, send notification to customer
+          # Mark first agent response only once
+          self.first_response_at ||= Time.current
+          self.agent_has_replied = true unless agent_has_replied?
         end
       end
 
-      # Customer replies back
+      # Waiting on Customer → In Progress: Customer replies back
       event :customer_reply do
-        transitions from: [ :waiting_on_customer, :resolved ], to: :in_progress
-
-        after do
-          # Log customer response, notify agent
-        end
+        transitions from: :waiting_on_customer, to: :in_progress
       end
 
-      # Mark ticket as resolved
+      # In Progress → Resolved: Agent marks as resolved
       event :resolve do
-        transitions from: [ :in_progress, :waiting_on_customer ], to: :resolved
+        transitions from: :in_progress, to: :resolved
 
         after do |*args|
-          self.resolved_at = Time.current
-          self.resolved_by = args.first if args.first
+          # self.resolved_at = Time.current
+          # self.resolved_by = args.first if args.first
         end
       end
 
-      # Close resolved ticket
+      # Resolved → Closed: Formal closure
+      # In Progress → Closed: Early closure without resolution
+      # Waiting on Customer → Closed: Closure due to inactivity
       event :close do
         transitions from: [ :resolved, :in_progress, :waiting_on_customer ], to: :closed
 
@@ -54,27 +50,16 @@ module TicketStateMachine
           self.closed_at = Time.current
         end
       end
-
-      # Reopen closed ticket
-      event :reopen do
-        transitions from: [ :closed, :resolved ], to: :reopened
-
-        after do
-          self.reopened_at = Time.current
-          self.closed_at = nil
-          self.resolved_at = nil
-          self.resolved_by = nil
-        end
-      end
     end
 
-    # Fixed assign_agent method
-    def assign_agent(agent)
+    # Method to assign agent and transition state
+    def assign_to_agent!(agent)
       with_lock do
         if may_assign?
           self.agent = agent
           assign!
           save!
+          true
         else
           errors.add(:base, "Cannot assign ticket in current state: #{status}")
           false
@@ -85,14 +70,15 @@ module TicketStateMachine
       false
     end
 
-    # Method to handle agent responses
-    def agent_responds!(agent = nil)
+    # Method to handle agent response and state transition
+    def agent_responds!
       with_lock do
         if may_agent_respond?
           agent_respond!
           save!
+          true
         else
-          errors.add(:base, "Cannot mark agent response in current state: #{status}")
+          errors.add(:base, "Cannot respond in current state: #{status}")
           false
         end
       end
@@ -101,14 +87,15 @@ module TicketStateMachine
       false
     end
 
-    # Method to handle customer replies
+    # Method to handle customer reply and state transition
     def customer_replies!
       with_lock do
         if may_customer_reply?
           customer_reply!
           save!
+          true
         else
-          errors.add(:base, "Cannot mark customer reply in current state: #{status}")
+          errors.add(:base, "Cannot reply in current state: #{status}")
           false
         end
       end
@@ -123,6 +110,7 @@ module TicketStateMachine
         if may_resolve?
           resolve!(resolved_by_agent)
           save!
+          true
         else
           errors.add(:base, "Cannot resolve ticket in current state: #{status}")
           false
@@ -139,6 +127,7 @@ module TicketStateMachine
         if may_close?
           close!
           save!
+          true
         else
           errors.add(:base, "Cannot close ticket in current state: #{status}")
           false
@@ -149,59 +138,13 @@ module TicketStateMachine
       false
     end
 
-    # Method to reopen ticket
-    def reopen_ticket!(reason = nil)
-      with_lock do
-        if may_reopen?
-          reopen!
-          self.reopen_reason = reason if reason
-          save!
-        else
-          errors.add(:base, "Cannot reopen ticket in current state: #{status}")
-          false
-        end
-      end
-    rescue AASM::InvalidTransition => e
-      errors.add(:base, "Invalid state transition: #{e.message}")
-      false
-    end
-
-    # Query methods for UI/business logic
-    def assignable?
-      may_assign?
-    end
-
-    def can_agent_respond?
-      may_agent_respond?
-    end
-
-    def can_customer_reply?
-      may_customer_reply?
-    end
-
-    def resolvable?
-      may_resolve?
-    end
-
-    def closable?
-      may_close?
-    end
-
-    def reopenable?
-      may_reopen?
-    end
-
     # Status helper methods
     def active?
       !closed?
     end
 
     def needs_agent_attention?
-      open? || reopened? || in_progress?
-    end
-
-    def waiting_for_customer?
-      waiting_on_customer?
+      open? || in_progress?
     end
 
     def completed?
