@@ -36,10 +36,28 @@ class TicketPolicy < ApplicationPolicy
     end
   end
 
-  private
+  def can_close?
+    return false unless show?
+    return false if record.closed?
 
-  def own_ticket?
-    user.present? && record.customer_id == user.id
+    if agent?
+      record.agent_id == user.id # Only assigned agent can close from any non-closed state
+    elsif customer?
+      own_ticket? && record.resolved? # Customer can only close their own ticket if it's resolved
+    else
+      false
+    end
+  end
+
+  def can_resolve?
+    return false unless show?
+    return false if record.resolved? || record.closed?
+
+    if agent?
+      record.agent_id == user.id && [ :in_progress, :waiting_on_customer, :reopened ].include?(record.status.to_sym)
+    else
+      false
+    end
   end
 
   def agent_can_comment?
@@ -50,6 +68,8 @@ class TicketPolicy < ApplicationPolicy
       record.agent_id == user.id # Only assigned agent can comment
     when :resolved
       record.agent_id == user.id # Only assigned agent can comment on resolved tickets
+    when :closed
+      false # No comments on closed tickets
     else
       false
     end
@@ -71,6 +91,13 @@ class TicketPolicy < ApplicationPolicy
       false
     end
   end
+
+  private
+
+  def own_ticket?
+    user.present? && record.customer_id == user.id
+  end
+
 
   class Scope < Scope
     def resolve

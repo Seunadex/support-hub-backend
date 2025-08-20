@@ -15,8 +15,7 @@ module Mutations
 
       # Use Pundit for authorization
       unless TicketPolicy.new(current_user, ticket).comment?
-        error_message = generate_authorization_error_message(ticket, current_user)
-        return unauthorized_response(error_message)
+        return unauthorized_response
       end
 
       # Process comment creation and state transitions

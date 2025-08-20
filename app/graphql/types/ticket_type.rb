@@ -16,6 +16,10 @@ module Types
     field :assigned_to, Types::UserType, null: true
     field :attachments, [ Types::AttachmentType ], null: false
     field :comments, [ Types::CommentType ], null: false
+    field :can_close, Boolean, null: false
+    field :can_resolve, Boolean, null: false
+    field :agent_can_comment, Boolean, null: false
+    field :customer_can_comment, Boolean, null: false
 
     def attachments
       object.attachments.attached? ? object.attachments : []
@@ -23,6 +27,22 @@ module Types
 
     def assigned_to
       object.agent
+    end
+
+    def can_close
+      TicketPolicy.new(context[:current_user], object).can_close?
+    end
+
+    def can_resolve
+      TicketPolicy.new(context[:current_user], object).can_resolve?
+    end
+
+    def agent_can_comment
+      TicketPolicy.new(context[:current_user], object).agent_can_comment?
+    end
+
+    def customer_can_comment
+      TicketPolicy.new(context[:current_user], object).customer_can_comment?
     end
   end
 end

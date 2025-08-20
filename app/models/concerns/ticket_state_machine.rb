@@ -33,11 +33,6 @@ module TicketStateMachine
       # In Progress → Resolved: Agent marks as resolved
       event :resolve do
         transitions from: :in_progress, to: :resolved
-
-        after do |*args|
-          # self.resolved_at = Time.current
-          # self.resolved_by = args.first if args.first
-        end
       end
 
       # Resolved → Closed: Formal closure
