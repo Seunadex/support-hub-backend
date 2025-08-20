@@ -9,5 +9,6 @@ module Types
     field :add_comment, mutation: Mutations::AddComment
     field :resolve_ticket, mutation: Mutations::ResolveTicket
     field :close_ticket, mutation: Mutations::CloseTicket
+    field :export_closed_tickets, mutation: Mutations::ExportClosedTickets
   end
 end

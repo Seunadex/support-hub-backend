@@ -27,6 +27,7 @@ Rails.application.configure do
   config.cache_store = :memory_store
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
+  Rails.application.routes.default_url_options[:host] = "localhost:3000"
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
@@ -41,7 +42,7 @@ Rails.application.configure do
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Set localhost to be used by links generated in mailer templates.
-  # config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
   config.x.frontend_base_url = "http://localhost:5173"
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

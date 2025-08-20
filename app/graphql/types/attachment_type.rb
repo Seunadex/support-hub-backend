@@ -25,7 +25,7 @@ module Types
     end
 
     def url
-      Rails.application.routes.url_helpers.rails_blob_url(object, only_path: true)
+      Rails.application.routes.url_helpers.rails_blob_url(object)
     end
   end
 end
