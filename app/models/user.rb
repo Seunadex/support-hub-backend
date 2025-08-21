@@ -6,9 +6,14 @@ class User < ApplicationRecord
          :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_many :tickets, dependent: :destroy
-  has_many :requested_tickets, class_name: "Ticket", foreign_key: "customer_id", dependent: :nullify
-  has_many :assigned_tickets, class_name: "Ticket", foreign_key: "agent_id", dependent: :nullify
-  has_many :comments, dependent: :destroy
+  has_many :requested_tickets, class_name: "Ticket", foreign_key: "customer_id", inverse_of: :customer, dependent: :nullify
+  has_many :assigned_tickets, class_name: "Ticket", foreign_key: "agent_id", inverse_of: :agent, dependent: :nullify
+  has_many :comments, foreign_key: "author_id", inverse_of: :author, dependent: :destroy
+
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :first_name, presence: true, length: { minimum: 2, maximum: 50 }
+  validates :last_name, presence: true, length: { minimum: 2, maximum: 50 }
+  validates :password, presence: true, length: { minimum: 6 }
 
   enum :role, { customer: 0, agent: 1 }
 

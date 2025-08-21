@@ -19,7 +19,7 @@ class Ticket < ApplicationRecord
 
   # Scopes for different states
   scope :active, -> { where.not(status: :closed) }
-  scope :needs_attention, -> { where(status: [ :open, :reopened, :in_progress ]) }
+  scope :needs_attention, -> { where(status: [ :open, :in_progress ]) }
   scope :waiting_for_customer, -> { where(status: :waiting_on_customer) }
   scope :pending, -> { where(status: [ :in_progress, :waiting_on_customer ]) }
   scope :completed, -> { where(status: [ :resolved, :closed ]) }

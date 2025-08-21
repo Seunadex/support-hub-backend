@@ -1,7 +1,6 @@
 module Resolvers
   class Tickets < BaseResolver
     def self.resolve(id, current_user)
-      return unless TicketPolicy.new(current_user, Ticket).show?
       Ticket.find(id)
     end
 

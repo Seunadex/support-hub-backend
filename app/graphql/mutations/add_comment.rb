@@ -1,6 +1,6 @@
 module Mutations
   class AddComment < BaseMutation
-    argument :ticket_id, String, required: true
+    argument :ticket_id, ID, required: true
     argument :body, String, required: true
 
     field :ticket, Types::TicketType, null: true

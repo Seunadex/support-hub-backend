@@ -8,7 +8,8 @@ class TicketPolicy < ApplicationPolicy
   end
 
   def create?
-    user.present?
+    # user.present?
+    customer?
   end
 
   def update?
@@ -54,7 +55,7 @@ class TicketPolicy < ApplicationPolicy
     return false if record.resolved? || record.closed?
 
     if agent?
-      record.agent_id == user.id && [ :in_progress, :waiting_on_customer, :reopened ].include?(record.status.to_sym)
+      record.agent_id == user.id && [ :in_progress, :waiting_on_customer ].include?(record.status.to_sym)
     else
       false
     end

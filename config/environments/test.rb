@@ -30,6 +30,7 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
+  config.devise_jwt_secret_key = ENV.fetch("DEVISE_JWT_SECRET_KEY") { "test_secret_key" }
 
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
