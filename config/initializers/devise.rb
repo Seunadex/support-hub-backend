@@ -20,16 +20,25 @@ Devise.setup do |config|
   # Configure the parent class to the devise controllers.
   # config.parent_controller = 'DeviseController'
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
-    jwt.dispatch_requests = [
-      [ "POST", %r{^/graphql$} ]
-    ]
-    jwt.revocation_requests = [
-      [ "DELETE", %r{^/graphql$} ]
-    ]
-    # jwt.revocation_strategy = JwtDenylist
-    jwt.expiration_time = 24.hours.to_i
-  end
+  secret =
+    ENV["DEVISE_JWT_SECRET_KEY"] ||
+    Rails.application.credentials.dig(:devise_jwt_secret_key)
+
+  secret ||= "test_secret_key" if Rails.env.test?
+  raise "DEVISE_JWT_SECRET_KEY missing" if Rails.env.production? && secret.blank?
+
+  jwt.secret = secret
+
+  jwt.dispatch_requests = [
+    [ "POST", %r{^/graphql$} ]
+  ]
+
+  jwt.revocation_requests = [
+    [ "DELETE", %r{^/graphql$} ]
+  ]
+
+  jwt.expiration_time = 24.hours.to_i
+end
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
