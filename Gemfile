@@ -60,6 +60,8 @@ group :development, :test do
   gem "shoulda-matchers"
   gem "database_cleaner-active_record"
   gem "simplecov", require: false
+  gem "pry-rails"
+  gem "pry-byebug"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false

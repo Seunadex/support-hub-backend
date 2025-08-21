@@ -52,7 +52,6 @@ class ApplicationPolicy
 
     def resolve
       scope.none
-      # raise NoMethodError, "You must define #resolve in #{self.class}"
     end
 
     private

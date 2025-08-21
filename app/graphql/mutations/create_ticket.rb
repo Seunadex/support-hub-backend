@@ -29,12 +29,11 @@ module Mutations
           { ticket: ticket, errors: [] }
         else
           { ticket: nil, errors: ticket.errors.full_messages }
-          raise ActiveRecord::Rollback
         end
       end
 
-    rescue Pundit::NotAuthorizedError
-      { ticket: nil, errors: [ "Access denied" ] }
+    rescue GraphQL::ExecutionError => e
+      { ticket: nil, errors: [ e.message ] }
 
     rescue StandardError => e
       Rails.logger.error("CreateTicket mutation failed: #{e.class}: #{e.message}")

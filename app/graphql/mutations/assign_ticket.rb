@@ -1,13 +1,13 @@
 module Mutations
   class AssignTicket < BaseMutation
-    argument :ticket_id, String, required: true
+    argument :ticket_id, ID, required: true
 
     field :ticket, Types::TicketType, null: true
     field :errors, [ String ], null: false
 
     def resolve(ticket_id:)
-      user = context[:current_user]
-      return unauthorized_response unless user
+      user = current_user
+      return { ticket: nil, errors: [ "User not found" ] } unless user
 
       ticket = Ticket.find_by(id: ticket_id)
       return not_found_error(ticket_id) unless ticket

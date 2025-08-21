@@ -1,6 +1,6 @@
 module Mutations
   class ResolveTicket < BaseMutation
-    argument :ticket_id, String, required: true
+    argument :ticket_id, ID, required: true
 
     field :success, Boolean, null: false
     field :errors, [ String ], null: false
@@ -8,7 +8,7 @@ module Mutations
     def resolve(ticket_id:)
       ticket = Ticket.find_by(id: ticket_id)
 
-      return not_found_error(ticket_id) unless ticket
+      return not_found_error unless ticket
 
       authorize!(ticket, :can_resolve?)
 
@@ -17,12 +17,15 @@ module Mutations
       else
         { success: false, errors: state_transition_error(ticket) }
       end
+
+    rescue GraphQL::ExecutionError => e
+      { success: false, errors: [ e.message ] }
     end
 
     private
 
-    def not_found_error(ticket_id)
-      { ticket: nil, errors: [ "Ticket not found" ] }
+    def not_found_error
+      { success: false, errors: [ "Ticket not found" ] }
     end
 
     def state_transition_error(ticket)

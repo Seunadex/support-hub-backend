@@ -1,12 +1,12 @@
 module Mutations
   class CloseTicket < BaseMutation
-    argument :ticket_id, String, required: true
+    argument :ticket_id, ID, required: true
 
     field :success, Boolean, null: false
     field :errors, [ String ], null: false
 
     def resolve(ticket_id:)
-      return unauthorized_response unless current_user
+      return unauthorized_response("User not found") unless current_user
 
       ticket = Ticket.find_by(id: ticket_id)
       return not_found_error unless ticket
@@ -28,8 +28,8 @@ module Mutations
       else
         { success: false, errors: state_transition_error(ticket) }
       end
-    rescue Pundit::NotAuthorizedError
-      unauthorized_response
+    rescue GraphQL::ExecutionError => e
+      unauthorized_response(e.message)
     rescue StandardError => e
       Rails.logger.error("CloseTicket mutation failed: #{e.class}: #{e.message}")
       Rails.logger.error(e.backtrace.first(10).join("\n"))
@@ -42,8 +42,8 @@ module Mutations
       { success: false, errors: [ "Ticket not found" ] }
     end
 
-    def unauthorized_response
-      { success: false, errors: [ "Access denied" ] }
+    def unauthorized_response(message)
+      { success: false, errors: [ message ] }
     end
 
     def state_transition_error(ticket)
