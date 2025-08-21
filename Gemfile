@@ -62,6 +62,7 @@ group :development, :test do
   gem "simplecov", require: false
   gem "pry-rails"
   gem "pry-byebug"
+  gem "dotenv-rails"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false

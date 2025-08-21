@@ -17,4 +17,4 @@ production:
   daily_open_tickets_digest:
     class: DailyOpenTicketsDigestJob
     queue: mailers
-    schedule: daily
+    schedule: at 8am every day
