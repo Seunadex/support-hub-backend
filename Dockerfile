@@ -61,6 +61,11 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y imagemagick libvips cron tzdata && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# # Install supercronic for cron-like scheduling
+# RUN curl -fsSL -o /usr/local/bin/supercronic \
+#       https://github.com/aptible/supercronic/releases/download/v0.2.4/supercronic-linux-amd64 \
+#     && chmod +x /usr/local/bin/supercronic
+
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails

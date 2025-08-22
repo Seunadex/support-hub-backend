@@ -19,7 +19,6 @@ console_command = '/rails/bin/rails console'
 [processes]
   app = "./bin/rails server"
   solidq = "bundle exec rake solid_queue:start"
-  scheduler = "bin/scheduler"
 
 [http_service]
   internal_port = 8080
