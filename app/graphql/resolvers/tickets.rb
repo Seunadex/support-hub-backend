@@ -5,7 +5,7 @@ module Resolvers
     end
 
     def self.resolve_many(current_user)
-      TicketPolicy::Scope.new(current_user, Ticket).resolve
+      Pundit.policy_scope!(current_user, Ticket)
     end
   end
 end

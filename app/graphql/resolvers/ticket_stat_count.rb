@@ -1,7 +1,7 @@
 module Resolvers
   class TicketStatCount < BaseResolver
     def self.resolve(current_user)
-      scope = TicketPolicy::Scope.new(current_user, Ticket).resolve
+      scope = Pundit.policy_scope!(current_user, Ticket)
       {
         total: scope.count,
         open: scope.open.count,

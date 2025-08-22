@@ -1,12 +1,6 @@
 module Authorization
   extend ActiveSupport::Concern
 
-  included do
-    # include Pundit::Authorization
-    # include Pundit::PolicyFinder
-  end
-
-
   private
 
   def current_user
