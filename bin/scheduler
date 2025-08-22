@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure log dir exists
+mkdir -p log
+
+crontab config/cron/digest
+cron -f

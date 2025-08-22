@@ -1,0 +1,3 @@
+CRON_TZ=Africa/Lagos
+# Run every day at 09:00 Lagos time
+0 9 * * * cd /app && bin/rails rake digest:daily RAILS_ENV=production >> log/cron.log 2>&1
