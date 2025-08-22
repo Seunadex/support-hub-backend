@@ -25,14 +25,37 @@ Built with **Ruby on Rails 8**, **PostgreSQL**, **GraphQL**, **Devise JWT**, **P
    git clone https://github.com/Seunadex/support-hub-backend.git
    cd support-hub-backend
    ```
-2. **Run setup script**
+2. **Set environment variables**
 
-    ```bash
-    bin/setup
-    ```
-    ```bash
-    bin/dev
-    ```
+   Copy the example environment file and update values as needed:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   `.env.example` includes `DEVISE_JWT_SECRET_KEY`. You need to generate a secret using `bin/rails secret` and set it either in `.env` or in Rails credentials.
+
+   Edit `.env` to set your environment variables.
+
+3. **Run setup script**
+
+   ```bash
+   bin/setup
+   ```
+
+   ```bash
+   bin/dev
+   ```
+
+### 🔑 JWT Secret Setup
+
+The app uses Devise JWT. You must provide a secret key:
+
+1. Generate one: `bin/rails secret`
+2. Add to `.env`:
+   DEVISE_JWT_SECRET_KEY=<secret>
+   Or add to `config/credentials/development.yml.enc`:
+   devise_jwt_secret_key: <secret>
 
 ## 🧪 Running Tests
 
