@@ -28,6 +28,7 @@ gem "apollo_upload_server"
 gem "aasm"
 gem "mission_control-jobs"
 gem "propshaft"
+gem "sendgrid-ruby"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false

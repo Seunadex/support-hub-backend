@@ -438,7 +438,10 @@ GEM
     ruby-vips (2.2.4)
       ffi (~> 1.12)
       logger
+    ruby_http_client (3.5.5)
     securerandom (0.4.1)
+    sendgrid-ruby (6.7.0)
+      ruby_http_client (~> 3.4)
     shoulda-matchers (6.5.0)
       activesupport (>= 5.2.0)
     simplecov (0.22.0)
@@ -552,6 +555,7 @@ DEPENDENCIES
   rails (~> 8.0.2, >= 8.0.2.1)
   rspec-rails
   rubocop-rails-omakase
+  sendgrid-ruby
   shoulda-matchers
   simplecov
   solid_cable
