@@ -78,4 +78,4 @@ end
 
 gem "dockerfile-rails", ">= 1.7", group: :development
 
-gem "aws-sdk-s3", "~> 1.197", require: false
+gem "aws-sdk-s3", "~> 1.198", require: false
